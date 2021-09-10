@@ -1,0 +1,6 @@
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\obj\Debug\Komodo_Insurance_Classes.csproj.AssemblyReference.cache
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\obj\Debug\Komodo_Insurance_Classes.csproj.CoreCompileInputs.cache
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\bin\Debug\Komodo_Insurance_Classes.dll
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\bin\Debug\Komodo_Insurance_Classes.pdb
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\obj\Debug\Komodo_Insurance_Classes.dll
+C:\Users\17654\source\repos\Komodo_Insurance\Komodo_Insurance_Classes\obj\Debug\Komodo_Insurance_Classes.pdb
