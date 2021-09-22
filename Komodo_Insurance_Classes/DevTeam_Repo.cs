@@ -52,10 +52,11 @@ namespace Komodo_Insurance_Classes
         }
 
         //UPDATE
-        public DevTeam UpdateDevTeam(DevTeam devTeam)
+        public DevTeam UpdateDevTeam(int id, DevTeam devTeam)
         {
-            _devTeam.Name = devTeam.Name;
-            return _devTeam;
+            DevTeam team = GetTeamByID(id);
+            team.Name = devTeam.Name;
+            return team;
         }
         //REMOVE Developer from team by developer ID
         public bool RemoveDeveloperFromTeam(int devTeamID, int developerID)

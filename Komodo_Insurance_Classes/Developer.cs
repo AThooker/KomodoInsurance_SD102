@@ -18,7 +18,7 @@ namespace Komodo_Insurance_Classes
         public bool PluralSight { get; set; }
         
         //Full paramters with constructor
-        public Developer(int id, string name, bool pluralSight)
+        public Developer(string name, bool pluralSight)
         {
             ID = Interlocked.Increment(ref nextId);
             Name = name;

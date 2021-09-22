@@ -20,9 +20,9 @@ namespace Komodo_Insurance_Classes
         {
             ID = Interlocked.Increment(ref nextId);
         }
-        public DevTeam(int id, string name, List<Developer> developers)
+        public DevTeam(string name, List<Developer> developers)
         {
-            ID = id;
+            ID = Interlocked.Increment(ref nextId);
             Name = name;
             Developers = developers;
         }

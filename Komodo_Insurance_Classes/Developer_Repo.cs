@@ -27,12 +27,13 @@ namespace Komodo_Insurance_Classes
         }
 
         //UPDATE
-        public Developer UpdateDeveloper(Developer developer)
+        public Developer UpdateDeveloper(int devID, Developer developer)
         {
-            _developer.Name = developer.Name;
-            _developer.PluralSight = developer.PluralSight;
+            var developerToUpdate = GetByID(devID);
+            developerToUpdate.Name = developer.Name;
+            developerToUpdate.PluralSight = developer.PluralSight;
 
-            return _developer;
+            return developerToUpdate;
         }
 
         //DELETE

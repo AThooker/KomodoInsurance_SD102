@@ -14,6 +14,10 @@ namespace Komodo_Insurance_Console
         DevTeam_Repo _teamRepo = new DevTeam_Repo();
         public void Run()
         {
+            Console.Clear();
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Title = "Komodo Insurance";
             SeedMethod();
             Menu();
         }
@@ -24,16 +28,16 @@ namespace Komodo_Insurance_Console
             {
                 Console.Clear();
                 Console.WriteLine("Komodo Insurance\n\n" +
-                    "1. I would like to create a Developer profile\n" +
-                    "2. I would like to see all Developers\n" +
-                    "3. I would like to update a Developer\n" +
-                    "4. I would like to delete a developer\n" +
-                    "5. I would like to create a Team\n" +
-                    "6. I would like to see all the teams\n" +
-                    "7. I would like to update a team\n" +
-                    "8. I would like to delete a team\n" +
-                    "9. I would like to add a Developer to a Team\n" +
-                    "10. I would like to remove a Developer from a Team\n" +
+                    "1.  Create a Developer profile\n" +
+                    "2.  See all Developers\n" +
+                    "3.  Update a Developer\n" +
+                    "4.  Delete a developer\n" +
+                    "5.  Create a Team\n" +
+                    "6.  See all the teams\n" +
+                    "7.  Update a team\n" +
+                    "8.  Delete a team\n" +
+                    "9.  Add a Developer to a Team\n" +
+                    "10. Remove a Developer from a Team\n" +
                     "11. Exit");
                 string input = Console.ReadLine();
                 try
@@ -89,38 +93,125 @@ namespace Komodo_Insurance_Console
 
             }
         }
-
         //DEVELOPERS
-        private static void CreateDeveloper()
+        private void CreateDeveloper()
         {
-            Developer developer = new Developer();
-            Console.Write("Name of Developer: ");
-            developer.Name = Console.ReadLine();
-            Console.Write("Do they have access to Pluralsight?");
-            developer.PluralSight = bool.Parse(Console.ReadLine());
-            Console.WriteLine("Would you like to add them to a team? y/n: ");
-            string response = Console.ReadLine();
-            if (response == "y")
+            Console.Clear();
+            bool keepRunning = true;
+            while (keepRunning)
             {
-                Console.WriteLine("Which team? (Choose the team ID): \n");
+                Developer developer = new Developer();
+                Console.Write("Name of Developer: ");
+                developer.Name = Console.ReadLine();
+                Console.Write("Do they have access to Pluralsight?: ");
+                string pluralSightInput = Console.ReadLine().ToLower();
+                if (pluralSightInput.StartsWith("y"))
+                {
+                    developer.PluralSight = true;
+                }
+                else
+                {
+                    developer.PluralSight = false;
+                }
 
+                if (_devRepo.CreateDeveloper(developer))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Developer created successfully");
+                    DisplayDeveloper(developer);
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("There has been an issue, try again\n");
+                    keepRunning = true;
+                }
+
+                //Console.WriteLine("Would you like to add this Developer to a team? (y or n): ");
+                //string response = Console.ReadLine();
+                //if (response == "y")
+                //{
+                //    AddDeveloperToTeam();
+                //    List<DevTeam> devTeams = _teamRepo.GetDevTeams();
+                //    foreach(var team in devTeams)
+                //    {
+                //        DisplayTeam(team);
+                //    }
+                //    Console.WriteLine("\nDeveloper successfully added!\n");
+                //    GetListOfTeams();
+                //    Console.WriteLine("Press any key to continue");
+                //    Console.ReadKey();
+                //    break;
+                //}
 
             }
         }
-        private static void GetAllDevelopers()
+        private void DisplayDeveloper(Developer developer)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("\n" +
+                $"Developer ID: {developer.ID}\n" +
+                $"Name: {developer.Name}\n" +
+                $"Access to PluralSight: {developer.PluralSight}\n\n");
         }
-        private static void UpdateDeveloper()
+        private void GetAllDevelopers()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            List<Developer> developers = _devRepo.GetDevelopers();
+            foreach (var developer in developers)
+            {
+                DisplayDeveloper(developer);
+            }
+            Console.WriteLine("\n" +
+                "Press any key to continue");
+            Console.ReadKey();
         }
-
-        private static void DeleteDeveloper()
+        private void UpdateDeveloper()
         {
-            throw new NotImplementedException();
+            GetAllDevelopers();
+            Console.WriteLine("\nWhich developer would you like to update?(Choose their ID): ");
+            int input = int.Parse(Console.ReadLine());
+            var developer = _devRepo.GetByID(input);
+            Console.WriteLine("These are their current credentials: \n");
+            DisplayDeveloper(developer);
+            Developer changingDev = new Developer();
+            Console.WriteLine("What do you want their name to be now?: ");
+            changingDev.Name = Console.ReadLine();
+            Console.WriteLine("Do you want them to have access to PluralSight?: ");
+            string inputPlural = Console.ReadLine().ToLower();
+            changingDev.PluralSight = inputPlural.StartsWith("y") ? true : false;
+            var updatedDeveloper = _devRepo.UpdateDeveloper(input, changingDev);
+            Console.Clear();
+            Console.WriteLine("Here are their credentials now!\n");
+            DisplayDeveloper(updatedDeveloper);
+            Console.WriteLine("\nPress any key to continue");
+            Console.ReadKey();
         }
-
+        private void DeleteDeveloper()
+        {
+            Console.Clear();
+            bool keepRunning = true;
+            while (keepRunning)
+            {
+                GetAllDevelopers();
+                Console.WriteLine("\nWhich developer would you like to delete?(Choose their ID): ");
+                int input = int.Parse(Console.ReadLine());
+                if (_devRepo.DeleteDeveloper(input))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Developer successfully deleted\n");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Developer deletion unsuccessful, try again.");
+                    keepRunning = true;
+                }
+            }
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+        }
         //TEAMS
         private void CreateTeam()
         {
@@ -128,14 +219,13 @@ namespace Komodo_Insurance_Console
             while (true)
             {
                 DevTeam team = new DevTeam();
+                team.Developers = new List<Developer>();
                 Console.WriteLine("What would you like this team's name to be: ");
                 team.Name = Console.ReadLine();
                 if (_teamRepo.CreateTeam(team))
                 {
                     Console.Clear();
-                    Console.WriteLine("Your team has been created successfully\n\n" +
-                        $"Team ID: {team.ID}\n" +
-                        $"Team Name: {team.Name}\n\n");
+                    DisplayTeam(team);
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                 }
@@ -147,8 +237,15 @@ namespace Komodo_Insurance_Console
                 break;
             }
         }
+        private void DisplayTeam(DevTeam team)
+        {
+            Console.WriteLine("Your team\n\n" +
+                                    $"Team ID: {team.ID}\n" +
+                                    $"Team Name: {team.Name}\n\n");
+        }
         private void GetListOfTeams()
         {
+            Console.Clear();
             List<DevTeam> teams = _teamRepo.GetDevTeams();
             foreach (var team in teams)
             {
@@ -160,26 +257,85 @@ namespace Komodo_Insurance_Console
                         $"Developer Name: {developer.Name}");
                 }
             }
+            Console.WriteLine("\nPress any key to continue");
+            Console.ReadKey();
         }
-        private static void UpdateTeam()
+        private void UpdateTeam()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            GetListOfTeams();
+            Console.WriteLine("\nWhich team would you like to update?(Choose the team's ID): \n");
+            int input = int.Parse(Console.ReadLine());
+            DevTeam team = _teamRepo.GetTeamByID(input);
+            Console.WriteLine("These are the team's credentials: \n");
+            DisplayTeam(team);
+            DevTeam updatingTeam = new DevTeam();
+            Console.WriteLine("what would you like the teams name to be now?: ");
+            updatingTeam.Name = Console.ReadLine();
+            var updatedTeam = _teamRepo.UpdateDevTeam(input, updatingTeam);
+            Console.WriteLine("These are the team's credentials now:\n");
+            DisplayTeam(team);
+            Console.WriteLine("\nPress any key to continue");
+            Console.ReadKey();
         }
-        private static void DeleteTeam()
+        private void DeleteTeam()
         {
-            throw new NotImplementedException();
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Which team would you like to delete?(Choose team ID): \n");
+                _teamRepo.GetDevTeams();
+                int input = int.Parse(Console.ReadLine());
+                Console.WriteLine("This is the team you are deleting: \n");
+                _teamRepo.GetTeamByID(input);
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+                if(_teamRepo.DeleteDevTeam(input))
+                {
+                    Console.WriteLine("Team deleted successfully!!\n" +
+                        "Press any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong, try again");
+                    continue;
+                }
+            }
         }
         private static void AddDeveloperToTeam()
         {
-            throw new NotImplementedException();
+
         }
         private static void RemoveDeveloperFromTeam()
         {
             throw new NotImplementedException();
         }
-        public static void SeedMethod()
+        public void SeedMethod()
         {
+            //Seed teams
+            List<Developer> devTeamAlpha = new List<Developer>();
+            DevTeam teamOne = new DevTeam("Alpha", devTeamAlpha);
+            _teamRepo.CreateTeam(teamOne);
 
+            List<Developer> devTeamBravo = new List<Developer>();
+            DevTeam teamTwo = new DevTeam("Bravo", devTeamBravo);
+            _teamRepo.CreateTeam(teamTwo);
+
+            List<Developer> devTeamCharlie = new List<Developer>();
+            DevTeam teamThree = new DevTeam("Charlie", devTeamCharlie);
+            _teamRepo.CreateTeam(teamThree);
+
+            //Seed developers
+
+            Developer devOne = new Developer("Alex", true);
+            Developer devTwo = new Developer("Bryce", false);
+            Developer devThree = new Developer("Chuck", true);
+
+            _devRepo.CreateDeveloper(devOne);
+            _devRepo.CreateDeveloper(devTwo);
+            _devRepo.CreateDeveloper(devThree);
         }
     }
 }
