@@ -290,7 +290,7 @@ namespace Komodo_Insurance_Console
                 _teamRepo.GetTeamByID(input);
                 Console.WriteLine("Press any key to continue");
                 Console.ReadKey();
-                if(_teamRepo.DeleteDevTeam(input))
+                if (_teamRepo.DeleteDevTeam(input))
                 {
                     Console.WriteLine("Team deleted successfully!!\n" +
                         "Press any key to continue");
@@ -304,13 +304,67 @@ namespace Komodo_Insurance_Console
                 }
             }
         }
-        private static void AddDeveloperToTeam()
+        private void AddDeveloperToTeam()
         {
-
+            Console.Clear();
+            do
+            {
+                GetAllDevelopers();
+                Console.WriteLine("\nWhich developer would you like to put on a team?(Choose ID): ");
+                int devId = int.Parse(Console.ReadLine());
+                var dev = _devRepo.GetByID(devId);
+                DisplayDeveloper(dev);
+                GetListOfTeams();
+                Console.WriteLine("\nWhich team would you like to put the developer on?(Choose ID): ");
+                int teamId = int.Parse(Console.ReadLine());
+                var team = _teamRepo.GetTeamByID(teamId);
+                DisplayTeam(team);
+                if (_teamRepo.AddDeveloperToTeam(teamId, devId))
+                {
+                    Console.WriteLine($"Developer {devId} added to team {teamId}\n\n" +
+                        $"Press any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("You done messed it up, try again.\n\n" +
+                        "Press any key to continue");
+                    Console.ReadKey();
+                    continue;
+                }
+            } while (true);
         }
-        private static void RemoveDeveloperFromTeam()
+        private void RemoveDeveloperFromTeam()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            while(true)
+            {
+                GetListOfTeams();
+                Console.WriteLine("From which team would you like to remove a developer? ");
+                int teamId = int.Parse(Console.ReadLine());
+                var team = _teamRepo.GetTeamByID(teamId);
+                DisplayTeam(team);
+                GetAllDevelopers();
+                Console.WriteLine("Which developer would you like to remove?: ");
+                int devId = int.Parse(Console.ReadLine());
+                var dev = _devRepo.GetByID(devId);
+                DisplayDeveloper(dev);
+                if(_teamRepo.RemoveDeveloperFromTeam(teamId, devId))
+                {
+                    Console.WriteLine("Developer removed successfully\n\n" +
+                        "Press any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong, try again\n\n" +
+                        "Press any key to continue");
+                    Console.ReadKey();
+                    continue;
+                }
+            }
         }
         public void SeedMethod()
         {
